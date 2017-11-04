@@ -10,13 +10,8 @@ class Tpv{
 
     private $_setSchema;
     private $_setEnviroment;
-    private $_setMerchantData;
-    private $_setTerminal;
-    private $_setTransactionType;
-    private $_setMethod;
     private $_setNameForm;
     private $_setIdForm;
-    private $_setSubmit;
     private $_setParameters;
     private $_setVersion;
     private $_setNameSubmit;
@@ -37,11 +32,6 @@ class Tpv{
     {
         $this->setSchema($schema);
         $this->setEnviroment();
-        $this->_setTerminal =1;
-        $this->_setMerchantData = '';
-        $this->_setTransactionType=0;
-        $this->_setMethod='T';
-        $this->_setSubmit = '';
 
         $this->_setParameters = array();
         $this->_setVersion = 'HMAC_SHA256_V1';
