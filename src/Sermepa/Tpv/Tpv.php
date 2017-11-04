@@ -8,6 +8,7 @@ use Exception;
  */
 class Tpv{
 
+    private $_setSchema;
     private $_setEnviroment;
     private $_setMerchantData;
     private $_setTerminal;
@@ -28,9 +29,10 @@ class Tpv{
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($schema = 'https')
     {
-        $this->_setEnviroment='https://sis-t.redsys.es:25443/sis/realizarPago';
+        $this->setSchema($schema);
+        $this->setEnviroment();
         $this->_setTerminal =1;
         $this->_setMerchantData = '';
         $this->_setTransactionType=0;
@@ -47,6 +49,11 @@ class Tpv{
         $this->_setStyleSubmit = '';
         $this->_setClassSubmit = '';
 
+    }
+
+    public function setSchema($schema)
+    {
+        $this->_setSchema = $schema === 'http' ? 'http' : 'https';
     }
 
     /************* NEW METHODS ************* */
@@ -304,11 +311,11 @@ class Tpv{
     {
         if(trim($enviroment) == 'live'){
             //Live
-            $this->_setEnviroment='https://sis.redsys.es/sis/realizarPago';
+            $this->_setEnviroment=$this->_setSchema.'://sis.redsys.es/sis/realizarPago';
         }
         elseif(trim($enviroment) == 'test'){
             //Test
-            $this->_setEnviroment ='https://sis-t.redsys.es:25443/sis/realizarPago';
+            $this->_setEnviroment =$this->_setSchema.'://sis-t.redsys.es:25443/sis/realizarPago';
         }
         else{
             throw new Exception('Add test or live');
