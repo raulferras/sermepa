@@ -24,10 +24,14 @@ class Tpv{
     private $_setValueSubmit;
     private $_setStyleSubmit;
     private $_setClassSubmit;
-    private $_setSignature;    
+    private $_setSignature;
 
     /**
      * Constructor
+     *
+     * @param string $schema
+     *
+     * @throws \Exception
      */
     public function __construct($schema = 'https')
     {
@@ -93,7 +97,7 @@ class Tpv{
     {
         if($amount >= 0) {
             $amount = $this->convertNumber($amount);
-            $amount = intval(strval($amount*100));
+            $amount = (int)((string)($amount*100));
 
             $this->_setParameters['DS_MERCHANT_AMOUNT'] = $amount;
         }
@@ -130,13 +134,15 @@ class Tpv{
 
     /**
      * Get Ds_Order of Notification
-     * @param $paraments Array with parameters
+     *
+     * @param array $parameters Array with parameters
+     *
      * @return string
      */
-    function getOrderNotification($paraments){
+    private function getOrderNotification($parameters){
         $order = '';
-        foreach($paraments as $key => $value) {
-            if(strtolower($key) == 'ds_order' ){
+        foreach($parameters as $key => $value) {
+            if(strtolower($key) === 'ds_order' ){
                 $order = $value;
             }
         }
@@ -145,7 +151,7 @@ class Tpv{
 
     /**
      * Set code Fuc of trade (required)
-     * @param $fuc Fuc
+     * @param string $fuc Fuc
      * @throws Exception
      */
     public function setMerchantcode($fuc)
@@ -190,13 +196,13 @@ class Tpv{
     }
 
     /**
-     * Set terminal by default is 1 to  Sadabell(required)
+     * Set terminal by default is 1 to Sadabell(required)
      * @param int $terminal
      * @throws Exception
      */
     public function setTerminal($terminal=1)
     {
-        if(intval($terminal) !=0){
+        if((int)$terminal !==0){
             $this->_setParameters['DS_MERCHANT_TERMINAL'] = $terminal;
         }
         else{
@@ -254,7 +260,7 @@ class Tpv{
 
     /**
      * Generate Merchant Signature
-     * @param $key
+     * @param string $key
      * @return string
      */
     public function generateMerchantSignature($key)
@@ -272,8 +278,8 @@ class Tpv{
 
     /**
      * Generate Merchant Signature Notification
-     * @param $key
-     * @param $data
+     * @param string $key
+     * @param string $data
      * @return string
      */
     public function generateMerchantSignatureNotification($key, $data){
@@ -293,7 +299,7 @@ class Tpv{
 
     /**
      * Set Merchant Signature
-     * @param $signature
+     * @param string $signature
      * @internal param $value
      */
     public function setMerchantSignature($signature)
@@ -309,11 +315,11 @@ class Tpv{
      */
     public function setEnviroment($enviroment='test')
     {
-        if(trim($enviroment) == 'live'){
+        if(trim($enviroment) === 'live'){
             //Live
             $this->_setEnviroment=$this->_setSchema.'://sis.redsys.es/sis/realizarPago';
         }
-        elseif(trim($enviroment) == 'test'){
+        elseif(trim($enviroment) === 'test'){
             //Test
             $this->_setEnviroment =$this->_setSchema.'://sis-t.redsys.es:25443/sis/realizarPago';
         }
@@ -326,13 +332,14 @@ class Tpv{
     /**
      * Set language code by default 001 = Spanish
      *
-     * @param string $languagecode Language code [Castellano-001, Inglés-002, Catalán-003, Francés-004, Alemán-005, Holandés-006, Italiano-007, Sueco-008, Portugués-009, Valenciano-010, Polaco-011, Gallego-012 y Euskera-013.]
+     * @param string $languageCode Language code [Castellano-001, Inglés-002, Catalán-003, Francés-004, Alemán-005, Holandés-006, Italiano-007, Sueco-008, Portugués-009, Valenciano-010, Polaco-011, Gallego-012 y Euskera-013.]
+     *
      * @throws Exception
      */
-    public function setLanguage($languagecode='001')
+    public function setLanguage($languageCode='001')
     {
-        if(strlen(trim($languagecode)) > 0){
-            $this->_setParameters['DS_MERCHANT_CONSUMERLANGUAGE'] = trim($languagecode);
+        if(strlen(trim($languageCode)) > 0){
+            $this->_setParameters['DS_MERCHANT_CONSUMERLANGUAGE'] = trim($languageCode);
         }
         else{
             throw new Exception('Add language code');
@@ -351,7 +358,7 @@ class Tpv{
 
     /**
      * Optional field for the trade to be included in the data sent by the "on-line" response to trade if this option has been chosen.
-     * @param $merchantdata
+     * @param string $merchantdata
      * @throws Exception
      */
     public function setMerchantData($merchantdata)
@@ -432,12 +439,12 @@ class Tpv{
     /**
      * Card number
      *
-     * @param $pan Tarjeta. Su longitud depende del tipo de tarjeta.
+     * @param int|string $pan Tarjeta. Su longitud depende del tipo de tarjeta.
      * @throws Exception
      */
     public function setPan($pan)
     {
-        if (intval($pan) != 0){
+        if ((int)$pan !== 0){
             $this->_setParameters['DS_MERCHANT_PAN'] = $pan;
         }
         else{
@@ -448,13 +455,14 @@ class Tpv{
     /**
      * Expire date
      *
-     * @param $expirydate . Caducidad de la tarjeta. Su formato es AAMM, siendo AA los dos últimos dígitos del año y MM los dos dígitos del mes.
+     * @param string $expiryDate . Caducidad de la tarjeta. Su formato es AAMM, siendo AA los dos últimos dígitos del año y MM los dos dígitos del mes.
+     *
      * @throws Exception
      */
-    public function setExpiryDate($expirydate)
+    public function setExpiryDate($expiryDate)
     {
-        if (strlen(trim($expirydate)) == 4){
-            $this->_setParameters['DS_MERCHANT_EXPIRYDATE'] = $expirydate;
+        if (strlen(trim($expiryDate)) === 4){
+            $this->_setParameters['DS_MERCHANT_EXPIRYDATE'] = $expiryDate;
         }
         else{
             throw new Exception('Expire date is not valid');
@@ -464,12 +472,12 @@ class Tpv{
     /**
      * CVV2 card
      *
-     * @param $cvv2 Código CVV2 de la tarjeta
+     * @param int|string $cvv2 Código CVV2 de la tarjeta
      * @throws Exception
      */
     public function setCVV2($cvv2)
     {
-        if (intval($cvv2) != 0){
+        if ((int)$cvv2 !== 0){
             $this->_setParameters['DS_MERCHANT_CVV2'] = $cvv2;
         }
         else{
@@ -500,10 +508,12 @@ class Tpv{
 
     /**
      * Set Attributes to submit
-     * @param string $name Name submit
-     * @param string $id Id submit
-     * @param string $value Value submit
-     * @param string $style Set Style
+     *
+     * @param string $name     Name submit
+     * @param string $id       Id submit
+     * @param string $value    Value submit
+     * @param string $style    Set Style
+     * @param string $cssClass CSS class.
      */
     public function setAttributesSubmit($name = 'btn_submit', $id='btn_submit', $value='Send', $style='', $cssClass='')
     {
@@ -580,9 +590,10 @@ class Tpv{
      * @return array with parameters of bank
      */
     public function getMerchantParameters($parameters){
-        $decodec = $this->decodeParameters($parameters);
-        $decodec_array=$this->JsonToArray($decodec);
-        return $decodec_array;
+        $decoded = $this->decodeParameters($parameters);
+        $decodedArray = $this->JsonToArray($decoded);
+
+        return $decodedArray;
     }
 
 
@@ -617,7 +628,7 @@ class Tpv{
 
     /**
      * Convert Array to json
-     * @param $data Array
+     * @param array $data Array
      * @return string Json
      */
     private function arrayToJson($data)
@@ -649,8 +660,8 @@ class Tpv{
 
     /**
      * Encrypt to 3DES
-     * @param $data Data for encrypt
-     * @param $key Key
+     * @param string $data Data for encrypt
+     * @param string $key Key
      * @return string
      */
     private function encrypt_3DES($data, $key){
@@ -675,11 +686,11 @@ class Tpv{
     {
         $price = preg_replace('/[^0-9\.,]*/i', '', $price);
         $price = str_replace(',', '.', $price);
-        if(substr($price, -3, 1) == '.')
+        if(substr($price, -3, 1) === '.')
         {
             $price = explode('.', $price);
             $last = array_pop($price);
-            $price = join($price, '').'.'.$last;
+            $price = implode($price, '').'.'.$last;
         }
         else
         {
@@ -688,14 +699,19 @@ class Tpv{
         return $price;
     }
 
+    /**
+     * @param string $price
+     *
+     * @return string
+     */
     private function convertNumber($price)
     {
-        $number=number_format(str_replace(',', '.', $price), 2, '.', '');
+        $number = number_format(str_replace(',', '.', $price), 2, '.', '');
         return $number;
 
     }
     /******  Base64 Functions  *****
-     * @param $input
+     * @param string $input
      * @return string
      */
     private function base64_url_encode($input)
@@ -704,7 +720,7 @@ class Tpv{
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @return string
      */
     private function encodeBase64($data)
@@ -714,7 +730,7 @@ class Tpv{
     }
 
     /**
-     * @param $input
+     * @param string $input
      * @return string
      */
     private function base64_url_decode($input)
@@ -723,7 +739,7 @@ class Tpv{
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @return string
      */
     private function decodeBase64($data)
